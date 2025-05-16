@@ -1,0 +1,59 @@
+body{
+  background-color: #183b50;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.home_text{
+  text-align: center;
+}
+
+.title{
+  font-size: 30px;
+}
+
+.explanation{
+  font-size: 20px;
+}
+
+.login{
+  display: flex;
+  gap:8px;
+}
+
+.input_login,.login_button{
+  height: 60px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border-radius: 0;
+}
+
+.input_login{
+  width: 800px;
+}
+
+.login_button{
+  background-color: green;
+  width: 60px;
+  height: 60px;
+  border-radius: 0;
+}
+
+/*
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+*/
