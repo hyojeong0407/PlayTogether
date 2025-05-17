@@ -1,0 +1,110 @@
+/* 유지됨 */
+.recommend-container {
+    background-color: #183b50;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.dashboard {
+    margin-bottom: 25px;
+}
+
+.genre-chart {
+    background-color: white;
+    width: 1000px;
+    height: 300px;
+    display: flex;
+}
+
+.content-area {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+}
+
+/* 좌측 게임 리스트 영역 */
+.game-lists {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.owned-games, .recommended-games {
+    border: 1px solid #d9d9d9;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sub-title {
+    background-color: #d9d9d9;
+    color: black;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+/* 게임 항목 */
+.game-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+/* ✅ 우측 패널: 상세 정보 + 친구 선택 */
+.right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 35px;
+}
+
+/* 상세 정보 */
+.game-detail {
+    flex: 2;
+    border: 1px solid #d9d9d9;
+    color: #222;
+    overflow-y: auto;
+}
+
+.detail-thumbnail {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* 친구 선택 */
+.friend-selector {
+    flex: 1;
+    border: 1px solid #d9d9d9;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.apply-button {
+    margin-top: auto;
+    padding: 8px;
+    background-color: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+input[type="checkbox"] {
+    margin-left: 15px;
+}
+
+label {
+    margin-left: 5px;
+}
