@@ -3,9 +3,14 @@ import './Recommend.css'
 
 function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
     const [selectedGame, setSelectedGame] = useState(null);
+    const [popupGame, setPopupGame] = useState(null);
 
     const handleGameClick = (game) => {
         setSelectedGame(game);
+    };
+
+    const handleGameDoubleClick = (game) => {
+        setPopupGame(game);
     };
 
     return (
@@ -23,6 +28,7 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
                                 key={game.id}
                                 className='game-item'
                                 onClick={() => handleGameClick(game)}
+                                onDoubleClick={() => handleGameDoubleClick(game)}
                             >
                                 <div>{game.name}</div> {/* 👈 이름만 표시 */}
                             </div>
@@ -36,6 +42,7 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
                                 key={game.id}
                                 className='game-item'
                                 onClick={() => handleGameClick(game)}
+                                onDoubleClick={() => handleGameDoubleClick(game)}
                             >
                                 <div>{game.name}</div> {/* 👈 이름만 표시 */}
                             </div>
@@ -52,7 +59,7 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
                                 src={selectedGame.thumbnail}
                                 alt='게임 썸네일'
                             />
-                            <div>이름: {selectedGame.name}</div>
+                            <div>{selectedGame.name}</div>
                             <div>장르: {selectedGame.genre}</div>
                             <div>평점: {selectedGame.rating}</div>
                             <div>플랫폼: {selectedGame.platform}</div>
@@ -72,6 +79,39 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
                     </div>
                 </div>
             </div>
+            {popupGame && (
+                <div className='popup-overlay' onClick={() => setPopupGame(null)}>
+                    <div className="popup-window" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-button" onClick={() => setPopupGame(null)}>돌아가기</button>
+                        <div className="popup-header">
+                            <img src={popupGame.thumbnail} alt="썸네일" className="popup-thumbnail" />
+                            <button className="steam-download">Steam download</button>
+                        </div>
+                        <div className='popup-body'>
+                            <div className="popup-section">
+                                <h4>게임설명</h4>
+                                <div className="popup-description">
+                                    {popupGame.description || '게임설명글'}
+                                </div>
+                            </div>
+                            <div className="popup-row">
+                                <div className="popup-video-box">
+                                    <h4>관련 영상</h4>
+                                    <button className="popup-video-button">▶</button>
+                                </div>
+                                <div className="popup-friend-box">
+                                    <h4>이 게임을 가진 친구</h4>
+                                    <ul className="popup-friend-list">
+                                        {(popupGame.friends || friends).map((f, i) => (
+                                            <li key={i}>{f.nickname}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

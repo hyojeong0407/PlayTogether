@@ -1,6 +1,18 @@
 import { useState } from 'react'
 import './App.css'
 import Recommend from './components/Recommend'
+import game4 from './components/game-4.png'
+
+// 테스트용 데이터
+const ownedGames = [
+  { id: 1, name: '테스트 게임', thumbnail: game4 }
+];
+const recommendedGames = [
+  { id: 2, name: '추천 게임', thumbnail: game4 }
+];
+const friends = [
+  { id: 'f1', nickname: '철수' }
+];
 
 function App() {
   const [showRecommend, setShowRecommend] = useState(false);
@@ -28,7 +40,11 @@ function App() {
           </div>  
         </>
       ) : (
-        <Recommend />
+        <Recommend
+          ownedGames={ownedGames}
+          recommendedGames={recommendedGames}
+          friends={friends}
+        />
       )}  
     </>
   )
