@@ -35,7 +35,7 @@ function App() {
           </div> 
 
           <div className='login'>
-            <input className='input_login' type='text' placeholder='Steam 아이디 입력' /> <br />
+            <input className='input_login' type='text' placeholder='Steam id 입력' /> <br />
             <button className='login_button' onClick={handleClick}>Q</button>
           </div>  
         </>
@@ -44,6 +44,7 @@ function App() {
           ownedGames={ownedGames}
           recommendedGames={recommendedGames}
           friends={friends}
+          onLogoClick={() => setShowRecommend(false)} 
         />
       )}  
     </>

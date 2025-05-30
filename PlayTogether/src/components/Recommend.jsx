@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './Recommend.css'
+import logo from './PlayTogetherLOGO.png'
 
-function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
+function Recommend({ ownedGames = [], recommendedGames = [], friends = [] ,onLogoClick }) {
     const [selectedGame, setSelectedGame] = useState(null);
     const [popupGame, setPopupGame] = useState(null);
 
@@ -14,7 +15,13 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
     };
 
     return (
+        < >
         <div className='recommend-container'>
+        <img src={logo} alt="로고"
+            className='logo' 
+            onClick={() => { onLogoClick(); }} 
+            style={{cursor:'pointer'}}
+            />
             <div className='dashboard'>
                 <div className='genre-chart'>[장르별 선호도 그래프]</div>
             </div>
@@ -113,6 +120,7 @@ function Recommend({ ownedGames = [], recommendedGames = [], friends = [] }) {
                 </div>
             )}
         </div>
+        </>
     );
 }
 
