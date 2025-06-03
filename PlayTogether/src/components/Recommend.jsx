@@ -2,17 +2,15 @@ import { useState } from 'react'
 import './Recommend.css'
 import logo from './PlayTogetherLOGO.png'
 
-function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], friends = [], user, onLogoClick }) {
+function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initialRecommendedGames = [], friends = [], user, onLogoClick }) {
     const [selectedGame, setSelectedGame] = useState(null);
     const [popupGame, setPopupGame] = useState(null);
     const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구 steamId 배열
     const [ownedGames, setOwnedGames] = useState(initialOwnedGames); // 서버에서 받은 게임 목록
+    const [recommendedGames, setRecommendedGames] = useState(initialRecommendedGames);
 
     const handleGameClick = (game) => {
         setSelectedGame(game);
-    };
-
-    const handleGameDoubleClick = (game) => {
         setPopupGame(game);
     };
 
@@ -32,7 +30,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
             return;
         }
         try {
-            const res = await fetch('http://localhost:3000/game/common', {
+            const res = await fetch('http://localhost:8080/game/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -42,7 +40,8 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
             });
             if (!res.ok) throw new Error('서버 오류');
             const data = await res.json();
-            setOwnedGames(data); // [{ appid, name, thumbnail }, ...]
+            setOwnedGames(data.common || []);         // 함께 보유 중인 게임
+            setRecommendedGames(data.recommend || []);
         } catch (e) {
             alert('함께 보유 중인 게임을 불러오지 못했습니다.');
         }
@@ -66,12 +65,11 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                         <h3 className='sub-title'>함께 보유 중인 게임</h3>
                         {(ownedGames || []).map(game => (
                             <div
-                                key={game.appid}
+                                key={game.id}
                                 className='game-item'
                                 onClick={() => handleGameClick(game)}
-                                onDoubleClick={() => handleGameDoubleClick(game)}
                             >
-                                <img src={game.thumbnail} alt={game.name} style={{width: '80px', marginRight: '8px'}} />
+                                <img src={game.background_image} alt={game.name} style={{width: '80px', marginRight: '8px'}} />
                                 <div>{game.name}</div>
                             </div>
                         ))}
@@ -83,8 +81,9 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                             <div
                                 key={game.id}
                                 className='game-item'
-                                onClick={() => handleGameClick(game)}
-                                onDoubleClick={() => handleGameDoubleClick(game)}
+                                onClick={() => {
+                                    setPopupGame(game);
+                                }}
                             >
                                 <div>{game.name}</div>
                             </div>
@@ -98,14 +97,17 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                             <h3 className='sub-title'>게임 정보</h3>
                             <img
                                 className='detail-thumbnail'
-                                src={selectedGame.thumbnail}
+                                src={selectedGame.background_image}
                                 alt='게임 썸네일'
                             />
                             <div>{selectedGame.name}</div>
-                            <div>장르: {selectedGame.genre}</div>
+                            <div>장르: {selectedGame.genres && selectedGame.genres.join(', ')}</div>
                             <div>평점: {selectedGame.rating}</div>
-                            <div>플랫폼: {selectedGame.platform}</div>
-                            <div>플레이어 수: {selectedGame.players}</div>
+                            <div>공식 웹사이트: {selectedGame.website}</div>
+                            <div>설명: {selectedGame.description}</div>
+                            {selectedGame.sharedFriendIds && (
+                                <div>함께 보유한 친구: {selectedGame.sharedFriendIds.join(', ')}</div>
+                            )}
                         </div>
                     )}
 
@@ -131,10 +133,16 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                     <div className="popup-window" onClick={(e) => e.stopPropagation()}>
                         <button className="close-button" onClick={() => setPopupGame(null)}>돌아가기</button>
                         <div className="popup-header">
-                            <img src={popupGame.thumbnail} alt="썸네일" className="popup-thumbnail" />
+                            <img src={popupGame.background_image} alt="썸네일" className="popup-thumbnail" />
                             <button className="steam-download">Steam download</button>
                         </div>
                         <div className='popup-body'>
+                            <div className='game-detail'>
+                                <div>{popupGame.name}</div>
+                                <div>장르: {popupGame.genres && popupGame.genres.join(', ')}</div>
+                                <div>평점: {popupGame.rating}</div>
+                                <div>공식 웹사이트: {popupGame.website}</div>
+                            </div>
                             <div className="popup-section">
                                 <h4>게임설명</h4>
                                 <div className="popup-description">
@@ -149,8 +157,8 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                                 <div className="popup-friend-box">
                                     <h4>이 게임을 가진 친구</h4>
                                     <ul className="popup-friend-list">
-                                        {(popupGame.friends || friends).map((f, i) => (
-                                            <li key={i}>{f.name}</li>
+                                        {(popupGame.sharedFriendIds || []).map((name, i) => (
+                                            <li key={i}>{name}</li>
                                         ))}
                                     </ul>
                                 </div>
