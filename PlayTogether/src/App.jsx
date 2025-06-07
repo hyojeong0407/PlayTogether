@@ -20,7 +20,7 @@ function App() {
   try {
     // 1. 친구 ID 목록 가져오기
     const friendListRes = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetFriendList/v1/?key=${API_KEY}&steamid=${steamId}`
+      `https://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key=${API_KEY}&steamid=${steamId}`
     )
     const friendListData = await friendListRes.json()
     const friendIds = (friendListData.friendslist?.friends || []).map(f => f.steamid)
@@ -31,7 +31,7 @@ function App() {
     let friendsInfo = []
     if (allIds.length > 0) {
       const summariesRes = await fetch(
-        `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${API_KEY}&steamids=${allIds.slice(0, 100).join(',')}`
+        `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${API_KEY}&steamids=${allIds.slice(0, 100).join(',')}`
       )
       const summariesData = await summariesRes.json()
       const players = summariesData.response.players || []
