@@ -40,10 +40,29 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames = [], 
                     selectedFriends: selectedFriends
                 })
             });
+            
             if (!res.ok) throw new Error('서버 오류');
             const data = await res.json();
-            setOwnedGames(data); // [{ appid, name, thumbnail }, ...]
+            
+            // 같은 게임 목록 화면에 표시
+            const transformed = (data.common || []).map(game => ({
+                appid: game.id,
+                name: game.name,
+                thumbnail:game.background_image,
+                genre:(game.genres || []).join(', '),
+                rating:game.rating,
+                platform: 'Steam',
+                players: game.sharedFriendIds?.length || 1,
+                description: game.description,
+                friends: game.sharedFriendIds?.map(name => ({name})) || []
+            }));
+
+            console.log("서버응답:",date);
+            console.log('게임 목록:',transformed);
+
+            setOwnedGames(transformed); // [{ appid, name, thumbnail }, ...]
         } catch (e) {
+            console.error(e);
             alert('함께 보유 중인 게임을 불러오지 못했습니다.');
         }
     };

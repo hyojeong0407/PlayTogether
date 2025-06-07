@@ -39,7 +39,7 @@ function App() {
       user = players.find(p => p.steamid === steamId)
         ? {
             steamId: steamId,
-            name: players.find(p => p.steamid === steamId).personaname,
+            name: players.find(p => p.steamid === steamId).personaname, 
           }
         : { steamId, name: '' }
       // 친구 정보
