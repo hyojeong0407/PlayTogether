@@ -5,8 +5,8 @@ import logo from './PlayTogetherLOGO.png'
 function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initialRecommendedGames = [], friends = [], user, onLogoClick }) {
     const [selectedGame, setSelectedGame] = useState(null);
     const [popupGame, setPopupGame] = useState(null);
-    const [selectedFriends, setSelectedFriends] = useState([]); // 선택된 친구 steamId 배열
-    const [ownedGames, setOwnedGames] = useState(initialOwnedGames); // 서버에서 받은 게임 목록
+    const [selectedFriends, setSelectedFriends] = useState([]);
+    const [ownedGames, setOwnedGames] = useState(initialOwnedGames);
     const [recommendedGames, setRecommendedGames] = useState(initialRecommendedGames);
 
     const handleGameClick = (game) => {
@@ -14,23 +14,21 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
         setPopupGame(game);
     };
 
-    // 체크박스 변경 핸들러
     const handleFriendCheck = (steamId) => {
         setSelectedFriends(prev =>
             prev.includes(steamId)
-                ? prev.filter(id => id !== steamId)     // 이미 선택되어 있으면 해제(제거)
-                : [...prev, steamId]    // 선택되어 있지 않으면 추가
+                ? prev.filter(id => id !== steamId)
+                : [...prev, steamId]
         );
     };
 
-    // 적용 버튼 클릭 시 서버에 POST 요청
     const handleApply = async () => {
         if (!user || !user.steamId) {
             alert('본인 정보가 없습니다.');
             return;
         }
         try {
-            const res = await fetch('http://localhost:8080/game/common', {
+            const res = await fetch('http://localhost:8080/game/recommend', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -41,25 +39,12 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
             if (!res.ok) throw new Error('서버 오류');
             const data = await res.json();
 
-            //친구와 같이 가진 게임 표시
-             const transformed = (data.common || []).map(game => ({
-                id: game.id,
-                name: game.name,
-                thumbnail: game.background_image,
-                genres: (game.genres || []).join(', '),
-                rating: game.rating,
-                platform: 'Steam',
-                players: game.sharedFriendIds?.length || 1,
-                description: game.description,
-                friends: game.sharedFriendIds?.map(name => ({ name })) || []
+            // 서버에서 background_image 필드로 내려오므로 그대로 사용
+            const transformed = (data.common || []).map(game => ({
+                ...game, // 모든 필드 그대로 사용
             }));
 
-            console.log("서버응답:", data);
-            console.log('게임 목록:', transformed);
-
             setOwnedGames(transformed); 
-
-            //setOwnedGames(data); // [{ appid, name, thumbnail }, ...]
         } catch (e) {
             alert('함께 보유 중인 게임을 불러오지 못했습니다.');
         }
@@ -87,7 +72,11 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 className='game-item'
                                 onClick={() => handleGameClick(game)}
                             >
-                                <img src={game.background_image} alt={game.name} style={{width: '80px', marginRight: '8px'}} />
+                                <img
+                                    src={game.background_image}
+                                    alt={game.name}
+                                    style={{width: '80px', marginRight: '8px'}}
+                                />
                                 <div>{game.name}</div>
                             </div>
                         ))}
@@ -119,7 +108,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 alt='게임 썸네일'
                             />
                             <div>{selectedGame.name}</div>
-                            <div>장르: {selectedGame.genres && selectedGame.genres.join(', ')}</div>
+                            <div>장르: {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
                             <div>평점: {selectedGame.rating}</div>
                             <div>공식 웹사이트: {selectedGame.website}</div>
                             <div>설명: {selectedGame.description}</div>
@@ -128,7 +117,6 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                             )}
                         </div>
                     )}
-
                     <div className='friend-selector'>
                         <h3 className='sub-title'>게임 추천에 포함할 친구 선택</h3>
                         {friends.map((friend, index) => (
@@ -136,6 +124,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 <input
                                     type="checkbox"
                                     id={`friend-${index}`}
+                                    name={`friend-${index}`}
                                     checked={selectedFriends.includes(friend.steamId)}
                                     onChange={() => handleFriendCheck(friend.steamId)}
                                 />
@@ -151,7 +140,11 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                     <div className="popup-window" onClick={(e) => e.stopPropagation()}>
                         <button className="close-button" onClick={() => setPopupGame(null)}>돌아가기</button>
                         <div className="popup-header">
-                            <img src={popupGame.thumbnail} alt="썸네일" className="popup-thumbnail" />
+                            <img
+                                src={popupGame.background_image}
+                                alt="썸네일"
+                                className="popup-thumbnail"
+                            />
                             <button className="steam-download">Steam download</button>
                         </div>
                         <div className='popup-body'>
