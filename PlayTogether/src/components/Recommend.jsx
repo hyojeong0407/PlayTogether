@@ -121,9 +121,10 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 src={selectedGame.background_image}
                                 alt='게임 썸네일'
                             />
+                            <div style={{borderBottom: '1px solid #d9d9d9'}} />
                             <div className='detail-title'>{selectedGame.name}</div><br/>
                             {selectedGame.sharedFriendIds && (
-                                <div><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
+                                <div className='detail-friend'><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
                             )}<br/>
                             <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
                             <div><strong>평점:</strong> {selectedGame.rating}</div>
@@ -185,14 +186,16 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                     <h4>관련 영상</h4>
                                     <button className="popup-video-button">▶</button>
                                 </div> */}
-                                <div className="popup-friend-box">
-                                    <h4>이 게임을 가진 친구</h4>
-                                    <ul className="popup-friend-list">
-                                        {(popupGame.sharedFriendIds || []).map((name, i) => (
-                                            <li key={i}>{name}</li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                {popupGame.sharedFriendIds && popupGame.sharedFriendIds.length > 0 && (
+                                    <div className="popup-friend-box">
+                                        <h4>이 게임을 가진 친구</h4>
+                                        <ul className="popup-friend-list">
+                                            {popupGame.sharedFriendIds.map((name, i) => (
+                                                <li key={i}>{name}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
