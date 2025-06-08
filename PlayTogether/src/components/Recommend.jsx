@@ -13,6 +13,10 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
         setSelectedGame(game);
     };
 
+    const handleGameDoubleClick = (game) => {
+        setPopupGame(game);
+    };
+
     const handleFriendCheck = (steamId) => {
         setSelectedFriends(prev =>
             prev.includes(steamId)
@@ -76,6 +80,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 key={game.id}
                                 className='game-item'
                                 onClick={() => handleGameClick(game)}
+                                onDoubleClick={() => handleGameDoubleClick(game)}
                             >
                                 <img
                                     src={game.background_image}
@@ -93,9 +98,8 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                             <div
                                 key={game.id}
                                 className='game-item'
-                                onClick={() => {
-                                    setPopupGame(game);
-                                }}
+                                onClick={() => handleGameClick(game)}
+                                onDoubleClick={() => handleGameDoubleClick(game)}
                             >
                                 <img
                                     src={game.background_image}
@@ -118,13 +122,13 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 alt='게임 썸네일'
                             />
                             <div>{selectedGame.name}</div><br/>
+                            {selectedGame.sharedFriendIds && (
+                                <div><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
+                            )}<br/>
                             <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
                             <div><strong>평점:</strong> {selectedGame.rating}</div>
                             <div><strong>공식 웹사이트:</strong> {selectedGame.website}</div>
                             <div><strong>설명:</strong> {selectedGame.description}</div>
-                            {selectedGame.sharedFriendIds && (
-                                <div><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
-                            )}
                         </div>
                     )}
                     <div className='friend-selector'>
