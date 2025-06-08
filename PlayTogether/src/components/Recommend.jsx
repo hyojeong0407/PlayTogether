@@ -121,14 +121,13 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 src={selectedGame.background_image}
                                 alt='게임 썸네일'
                             />
-                            <div>{selectedGame.name}</div><br/>
+                            <div className='detail-title'>{selectedGame.name}</div><br/>
                             {selectedGame.sharedFriendIds && (
                                 <div><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
                             )}<br/>
                             <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
                             <div><strong>평점:</strong> {selectedGame.rating}</div>
                             <div><strong>공식 웹사이트:</strong> {selectedGame.website}</div>
-                            <div><strong>설명:</strong> {selectedGame.description}</div>
                         </div>
                     )}
                     <div className='friend-selector'>
@@ -159,10 +158,13 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 alt="썸네일"
                                 className="popup-thumbnail"
                             />
-                            <button className="steam-download">Steam download</button>
+                            <div><a className='steam-download' href={popupGame.website} target="_blank">{popupGame.website}</a></div>
                         </div>
                         <div className='popup-body'>
                             <div className="popup-section">
+                                <div className='detail-title'>{selectedGame.name}</div><br/>
+                                <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
+                                <div><strong>평점:</strong> {selectedGame.rating}</div><br/>
                                 <h4>게임설명</h4>
                                 <div className="popup-description">
                                     {popupGame.description || '게임설명글'}
