@@ -38,7 +38,7 @@
 }
 
 .owned-games, .recommended-games {
-    background-color: lightskyblue;
+    background-color: white;
     border: 1px solid #d9d9d9;
     color: black;
     flex: 1;
@@ -81,7 +81,7 @@
 
 /* 상세 정보 */
 .game-detail {
-    background-color: lightblue;
+    background-color: white;
     border: 1px solid #d9d9d9;
     color: black;
     overflow-y: auto;
@@ -108,7 +108,7 @@
 
 /* 친구 선택 */
 .friend-selector {
-    background-color: lightblue;
+    background-color: white;
     border: 1px solid #d9d9d9;
     color: black;
     display: flex;
@@ -130,7 +130,7 @@
 .apply-button {
     margin-top: auto;
     padding: 8px;
-    background-color: white;
+    background-color: lightblue;
     color: black;
     border: none;
     cursor: pointer;
