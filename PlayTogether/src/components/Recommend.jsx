@@ -127,7 +127,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                             )}<br/>
                             <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
                             <div><strong>평점:</strong> {selectedGame.rating}</div>
-                            <div><strong>공식 웹사이트:</strong> {selectedGame.website}</div>
+                            <div><strong>공식 웹사이트:</strong> {selectedGame.website ? selectedGame.website : '없음'}</div>
                         </div>
                     )}
                     <div className='friend-selector'>
@@ -158,7 +158,17 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 alt="썸네일"
                                 className="popup-thumbnail"
                             />
-                            <div><a className='steam-download' href={popupGame.website} target="_blank">{popupGame.website}</a></div>
+                            <div>
+                                {popupGame.website ? (
+                                    <a
+                                        className='steam-download'
+                                        href={popupGame.website}
+                                        target="_blank"
+                                    >
+                                        {popupGame.website}
+                                    </a>
+                                ) : null}
+                            </div>
                         </div>
                         <div className='popup-body'>
                             <div className="popup-section">
@@ -171,10 +181,10 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 </div>
                             </div>
                             <div className="popup-row">
-                                <div className="popup-video-box">
+                                {/* <div className="popup-video-box">
                                     <h4>관련 영상</h4>
                                     <button className="popup-video-button">▶</button>
-                                </div>
+                                </div> */}
                                 <div className="popup-friend-box">
                                     <h4>이 게임을 가진 친구</h4>
                                     <ul className="popup-friend-list">
