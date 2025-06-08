@@ -11,7 +11,6 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
 
     const handleGameClick = (game) => {
         setSelectedGame(game);
-        setPopupGame(game);
     };
 
     const handleFriendCheck = (steamId) => {
@@ -44,7 +43,13 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                 ...game, // 모든 필드 그대로 사용
             }));
 
-            setOwnedGames(transformed); 
+            setOwnedGames(transformed);
+
+            const recommended = (data.recommend || []).map(game => ({
+                ...game,
+            }));
+            setRecommendedGames(recommended);
+
         } catch (e) {
             alert('함께 보유 중인 게임을 불러오지 못했습니다.');
         }
@@ -75,7 +80,7 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 <img
                                     src={game.background_image}
                                     alt={game.name}
-                                    style={{width: '80px', marginRight: '8px'}}
+                                    style={{width: '200px', marginBottom: '10px', marginRight: '8px'}}
                                 />
                                 <div>{game.name}</div>
                             </div>
@@ -92,6 +97,11 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                     setPopupGame(game);
                                 }}
                             >
+                                <img
+                                    src={game.background_image}
+                                    alt={game.name}
+                                    style={{width: '200px', marginBottom: '10px', marginRight: '8px'}}
+                                />
                                 <div>{game.name}</div>
                             </div>
                         ))}
@@ -107,13 +117,13 @@ function Recommend({ ownedGames: initialOwnedGames = [], recommendedGames: initi
                                 src={selectedGame.background_image}
                                 alt='게임 썸네일'
                             />
-                            <div>{selectedGame.name}</div>
-                            <div>장르: {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
-                            <div>평점: {selectedGame.rating}</div>
-                            <div>공식 웹사이트: {selectedGame.website}</div>
-                            <div>설명: {selectedGame.description}</div>
+                            <div>{selectedGame.name}</div><br/>
+                            <div><strong>장르:</strong> {(Array.isArray(selectedGame.genres) ? selectedGame.genres.join(', ') : selectedGame.genres)}</div>
+                            <div><strong>평점:</strong> {selectedGame.rating}</div>
+                            <div><strong>공식 웹사이트:</strong> {selectedGame.website}</div>
+                            <div><strong>설명:</strong> {selectedGame.description}</div>
                             {selectedGame.sharedFriendIds && (
-                                <div>함께 보유한 친구: {selectedGame.sharedFriendIds.join(', ')}</div>
+                                <div><strong>함께 보유한 친구:</strong> {selectedGame.sharedFriendIds.join(', ')}</div>
                             )}
                         </div>
                     )}
