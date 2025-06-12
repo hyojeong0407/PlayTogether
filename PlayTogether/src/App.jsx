@@ -1,54 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import Recommend from './components/Recommend'
 
 function App() {
   const [showRecommend, setShowRecommend] = useState(false);
   const [steamId, setSteamId] = useState('');
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
-  const ownedGames = [];
-  const recommendedGames = [];
+  // 새로고침/창 닫힘 시 DB 초기화
+  useEffect(() => {
+    const handleBeforeUnload = async () => {
+      setIsResetting(true);
+      try {
+        await fetch('http://localhost:8080/api/steam/init', { method: 'POST' });
+      } catch (e) {
+        console.error('초기화 실패:', e);
+      } finally {
+        setIsResetting(false);
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // 홈 화면으로 돌아갈 때 DB 초기화
+  const handleLogoClick = async () => {
+    setIsResetting(true);
+    try {
+      await fetch('http://localhost:8080/api/steam/init', { method: 'POST' });
+      setShowRecommend(false);
+    } catch (e) {
+      alert('초기화 실패');
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   const handleClick = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      // 1. 친구 ID 목록 가져오기 (프록시 서버 경유)
-      const friendListRes = await fetch(
-        `http://localhost:8080/api/steam/friends?steamid=${steamId}`
-      );
-      const friendListData = await friendListRes.json();
-      const friendIds = (friendListData.friendslist?.friends || []).map(f => f.steamid);
-
-      // 2. 본인 + 친구 닉네임 정보 가져오기 (프록시 서버 경유)
-      const allIds = [steamId, ...friendIds];
-      let user = null;
-      let friendsInfo = [];
-      if (allIds.length > 0) {
-        const summariesRes = await fetch(
-          `http://localhost:8080/api/steam/player-summaries?steamids=${allIds.slice(0, 100).join(',')}`
-        );
-        const summariesData = await summariesRes.json();
-        const players = summariesData.response.players || [];
-        // 본인 정보
-        user = players.find(p => p.steamid === steamId)
-          ? {
-              steamId: steamId,
-              name: players.find(p => p.steamid === steamId).personaname, 
-            }
-          : { steamId, name: '' };
-        // 친구 정보
-        friendsInfo = players
-          .filter(p => p.steamid !== steamId)
-          .map(player => ({
-            steamId: player.steamid,
-            name: player.personaname,
-          }));
-      }
-      setUser(user);
-      setFriends(friendsInfo);
+      // 백엔드 API 호출 (/user/friend/{steamId})
+      const res = await fetch(`http://localhost:8080/user/friend/${steamId}`);
+      if (!res.ok) throw new Error('서버 오류');
+      const data = await res.json();
+      
+      setUser(data.user);
+      setFriends(data.friends);
       setShowRecommend(true);
     } catch (e) {
       alert('친구 목록을 불러오지 못했습니다.');
@@ -79,18 +79,20 @@ function App() {
               name="steamId"
               id="steamIdInput"
             /> <br />
-            <button className='login_button' onClick={handleClick} disabled={loading}>
-              {loading ? '불러오는 중...' : 'Q'}
+            <button 
+              className='login_button' 
+              onClick={handleClick} 
+              disabled={loading || isResetting}
+            >
+              {loading ? '불러오는 중...' : isResetting ? '초기화 중...' : 'Q'}
             </button>
           </div> 
         </>
       ) : (
         <Recommend
-          ownedGames={ownedGames}
-          recommendedGames={recommendedGames}
           user={user}
           friends={friends}
-          onLogoClick={() => setShowRecommend(false)} 
+          onLogoClick={handleLogoClick}
         />
       )}  
     </>
