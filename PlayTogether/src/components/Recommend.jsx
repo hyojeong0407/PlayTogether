@@ -86,7 +86,7 @@ function Recommend({ user, friends, onLogoClick }) {
         
         <div className='dashboard'>
           <div className='genre-chart'>
-            <h3 className='sub-charttitle'>장르별 선호도</h3>
+            <h3 className='sub-charttitle'>추천게임별 장르 분포도</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart
                 data={getGenreData()}
