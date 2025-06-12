@@ -1,6 +1,9 @@
-import { useState } from 'react'
-import './Recommend.css'
-import logo from './PlayTogetherLOGO.png'
+import { useState } from 'react';
+import './Recommend.css';
+import logo from './PlayTogetherLOGO.png';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
 
 function Recommend({ user, friends, onLogoClick }) {
   const [selectedGame, setSelectedGame] = useState(null);
@@ -51,6 +54,25 @@ function Recommend({ user, friends, onLogoClick }) {
     setIsApplying(false);
   };
 
+  // 장르별 선호도 계산
+  const getGenreData = () => {
+    const genreCount = {};
+
+    recommendedGames.forEach(game => {
+      const genres = Array.isArray(game.genres) ? game.genres : [game.genres];
+      genres.forEach(genre => {
+        if (genre) {
+          genreCount[genre] = (genreCount[genre] || 0) + 1;
+        }
+      });
+    });
+
+    return Object.entries(genreCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5) 
+      .map(([genre, count]) => ({ genre, count }));
+  };
+
   return (
     <>
       <div className='recommend-container'>
@@ -61,9 +83,26 @@ function Recommend({ user, friends, onLogoClick }) {
           onClick={onLogoClick}
           style={{cursor: 'pointer'}}
         />
+        
         <div className='dashboard'>
-          <div className='genre-chart'>[장르별 선호도 그래프]</div>
+          <div className='genre-chart'>
+            <h3 className='sub-charttitle'>장르별 선호도</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={getGenreData()}
+                layout="vertical"
+                margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis dataKey="genre" type="category" />
+                <Bar dataKey="count" fill="#82ca9d" />
+                <Tooltip />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
+
         <div className='content-area'>
           <div className='game-lists'>
             <div className='owned-games'>
@@ -142,6 +181,7 @@ function Recommend({ user, friends, onLogoClick }) {
             </div>
           </div>
         </div>
+
         {popupGame && (
           <div className='popup-overlay' onClick={() => setPopupGame(null)}>
             <div className="popup-window" onClick={(e) => e.stopPropagation()}>
@@ -176,10 +216,6 @@ function Recommend({ user, friends, onLogoClick }) {
                   </div>
                 </div>
                 <div className="popup-row">
-                  {/* <div className="popup-video-box">
-                    <h4>관련 영상</h4>
-                    <button className="popup-video-button">▶</button>
-                  </div> */}
                   {popupGame.sharedFriendIds && popupGame.sharedFriendIds.length > 0 && (
                     <div className="popup-friend-box">
                       <h4>이 게임을 가진 친구</h4>
